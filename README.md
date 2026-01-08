@@ -132,10 +132,10 @@ Check if the API is running.
 
 ## Outputs
 
- [!Output 1](./output/output%201.png)
+ ![Output 1](./output/output%201.png)
 
- [!Output 2](./output/output%202.png)
- [!Output 3](./output/output%203.png)
+ ![Output 2](./output/output%202.png)
+ ![Output 3](./output/output%203.png)
 
 ## ⚠️ Important Notes
 
