@@ -1,6 +1,45 @@
-mlProject
-env_config.txt
-.ipynb_checkpoints/
+# Python
+mlProject/
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Environment
+env_config.txt
+.env
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Project specific
 code tests/
-trash/
+model/
+model_artifacts_stacking/
+
+# Audio files (generated)
+audio/input/
+audio/output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data
+data/*.json
+!data/sessions.json

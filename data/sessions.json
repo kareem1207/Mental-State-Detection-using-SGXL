@@ -1,0 +1,86 @@
+{
+  "Normal": {
+    "audio_text": "You seem to be doing okay. Keep taking care of yourself and stay mindful.",
+    "tips": [
+      "Maintain a balanced routine",
+      "Stay connected with loved ones"
+    ],
+    "yoga": [
+      "Morning stretching",
+      "Deep breathing"
+    ]
+  },
+
+  "Depression": {
+    "audio_text": "I am here with you. You are not alone. Take things one step at a time.",
+    "tips": [
+      "Eat nutritious food",
+      "Maintain a sleep schedule",
+      "Talk to someone you trust"
+    ],
+    "yoga": [
+      "Balasana",
+      "Pranayama",
+      "Shavasana"
+    ]
+  },
+
+  "Suicidal": {
+    "audio_text": "I am really glad you reached out. Please consider talking to someone you trust or a professional right now.",
+    "tips": [
+      "Reach out to a loved one immediately",
+      "Avoid being alone"
+    ],
+    "yoga": [
+      "Gentle breathing only"
+    ]
+  },
+
+  "Anxiety": {
+    "audio_text": "Take a slow breath. This feeling will pass. You are safe right now.",
+    "tips": [
+      "Reduce caffeine intake",
+      "Practice grounding techniques"
+    ],
+    "yoga": [
+      "Anulom Vilom",
+      "Seated forward bend"
+    ]
+  },
+
+  "Bipolar": {
+    "audio_text": "Mood changes can be challenging. Support and structure can help you through this.",
+    "tips": [
+      "Track your mood changes",
+      "Maintain daily routines"
+    ],
+    "yoga": [
+      "Mindful breathing",
+      "Light stretching"
+    ]
+  },
+
+  "Stress": {
+    "audio_text": "You seem under pressure. Let us slow down and focus on what you can control.",
+    "tips": [
+      "Take short breaks",
+      "Organize your tasks"
+    ],
+    "yoga": [
+      "Neck stretches",
+      "Breathing exercises"
+    ]
+  },
+
+  "Personality disorder": {
+    "audio_text": "Feeling disconnected can be painful. Awareness is the first step toward balance.",
+    "tips": [
+      "Practice journaling",
+      "Observe emotional triggers"
+    ],
+    "yoga": [
+      "Grounding meditation",
+      "Slow breathing"
+    ]
+  }
+}

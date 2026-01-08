@@ -1,3 +1,5 @@
+#* models and data processing
+
 numpy
 pandas
 seaborn
@@ -7,4 +9,28 @@ ipykernel
 xgboost
 imbalanced-learn
 sentence-transformers 
-joblib 
+joblib
+torch
+
+#* web framework
+
+fastapi
+uvicorn
+python-multipart
+
+#* audio processing
+
+openai-whisper
+
+#* language detection
+
+langdetect
+
+#* NLP
+
+transformers
+sentencepiece
+sacremoses
+soundfile
+pydub
+pyttsx3

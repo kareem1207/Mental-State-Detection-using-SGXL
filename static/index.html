@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Audio Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .upload-section {
+            background: #f8f9fa;
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+
+        .upload-section:hover {
+            border-color: #764ba2;
+            background: #f0f0f5;
+        }
+
+        .upload-section.dragover {
+            border-color: #764ba2;
+            background: #e8e8f0;
+            transform: scale(1.02);
+        }
+
+        .upload-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .upload-card {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .upload-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .upload-card p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .upload-card .icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .recording-indicator {
+            display: none;
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            animation: pulse 1.5s infinite;
+        }
+
+        .recording-indicator.active {
+            display: block;
+        }
+
+        .recording-time {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .supported-formats {
+            color: #888;
+            font-size: 0.85em;
+            margin-top: 15px;
+        }
+
+        #audioInput {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .upload-btn:active {
+            transform: translateY(0);
+        }
+
+        .upload-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .record-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .record-btn:hover {
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+        }
+
+        .record-btn.recording {
+            background: #dc3545;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .results {
+            display: none;
+            margin-top: 30px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .prediction-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .prediction-card h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .prediction-Normal {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .prediction-Depression {
+            background: linear-gradient(135deg, #4568dc 0%, #b06ab3 100%);
+        }
+
+        .prediction-Suicidal {
+            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+        }
+
+        .prediction-Anxiety {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .transcription {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .transcription h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .transcription p {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .response-audio {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 2px solid #ffc107;
+        }
+
+        .response-audio h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .tips-section,
+        .yoga-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tips-section h3,
+        .yoga-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .tips-section ul,
+        .yoga-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tips-section li,
+        .yoga-section li {
+            background: white;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        .file-name {
+            color: #667eea;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .upload-section {
+                padding: 20px;
+            }
+
+            .upload-btn {
+                padding: 12px 30px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🧠 Mental Health Analyzer</h1>
+        <p class="subtitle">Upload or record audio to analyze your mental state and receive personalized guidance</p>
+
+        <div class="upload-section" id="uploadSection">
+            <h2 style="color: #667eea; margin-bottom: 10px;">How would you like to share your thoughts?</h2>
+            <p style="color: #888; margin-bottom: 25px;">Choose one of the options below</p>
+
+            <div class="upload-options">
+                <div class="upload-card" onclick="document.getElementById('audioInput').click()">
+                    <div class="icon">📁</div>
+                    <h3>Upload Audio File</h3>
+                    <p>Select an audio file from your device</p>
+                    <div class="supported-formats">Supports: MP3, WAV, M4A, OGG</div>
+                </div>
+
+                <div class="upload-card" id="recordCard">
+                    <div class="icon">🎤</div>
+                    <h3>Record Audio</h3>
+                    <p>Record your voice directly in the browser</p>
+                    <button class="upload-btn record-btn" id="recordBtn" onclick="event.stopPropagation()">
+                        Start Recording
+                    </button>
+                </div>
+            </div>
+
+            <input type="file" id="audioInput" accept="audio/*,.mp3,.wav,.m4a,.ogg,.webm">
+
+            <div class="recording-indicator" id="recordingIndicator">
+                <div>🔴 Recording in progress...</div>
+                <div class="recording-time" id="recordingTime">00:00</div>
+            </div>
+
+            <p id="fileName" class="file-name"></p>
+            <p style="color: #999; font-size: 0.9em; margin-top: 15px;">
+                💡 Tip: You can also drag and drop an audio file anywhere in this box
+            </p>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="color: #667eea; font-size: 1.1em;">Analyzing your audio... This may take a moment</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="results" id="results">
+            <div class="prediction-card" id="predictionCard">
+                <h2 id="predictionText">Mental State: Loading...</h2>
+                <p id="responseText" style="font-size: 1.1em; margin-top: 10px;"></p>
+            </div>
+
+            <div class="transcription">
+                <h3>📝 Your Transcribed Text</h3>
+                <p id="transcribedText"></p>
+            </div>
+
+            <div class="response-audio" style="background: #d1ecf1; border: 2px solid #17a2b8;" id="userAudioSection">
+                <h3>🎵 Your Audio Input</h3>
+                <p style="color: #0c5460; margin-bottom: 10px;">Listen to what you submitted:</p>
+                <audio id="userAudio" controls></audio>
+            </div>
+
+            <div class="response-audio" id="audioResponse">
+                <h3>🔊 Listen to Your Personalized Response</h3>
+                <audio id="responseAudio" controls></audio>
+            </div>
+
+            <div class="tips-section">
+                <h3>💡 Helpful Tips</h3>
+                <ul id="tipsList"></ul>
+            </div>
+
+            <div class="yoga-section">
+                <h3>🧘 Recommended Yoga & Breathing</h3>
+                <ul id="yogaList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let currentAudioFile = null;
+        let recordingStartTime = 0;
+        let recordingTimer = null;
+
+        const uploadSection = document.getElementById('uploadSection');
+        const audioInput = document.getElementById('audioInput');
+        const recordBtn = document.getElementById('recordBtn');
+        const fileName = document.getElementById('fileName');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const error = document.getElementById('error');
+        const recordingIndicator = document.getElementById('recordingIndicator');
+        const recordingTime = document.getElementById('recordingTime');
+
+        // Drag and drop functionality
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.classList.add('dragover');
+        });
+
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.classList.remove('dragover');
+        });
+
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                audioInput.files = files;
+                handleFileUpload(files[0]);
+            }
+        });
+
+        // File input change
+        audioInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        // Update recording timer
+        function updateRecordingTimer() {
+            const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            recordingTime.textContent = `${minutes}:${seconds}`;
+        }
+
+        // Record button
+        recordBtn.addEventListener('click', async () => {
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (e) => {
+                        audioChunks.push(e.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        const audioFile = new File([audioBlob], 'recording.wav', { type: 'audio/wav' });
+                        recordingIndicator.classList.remove('active');
+                        clearInterval(recordingTimer);
+                        fileName.textContent = '✅ Recording complete! Analyzing...';
+                        handleFileUpload(audioFile);
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    recordingStartTime = Date.now();
+                    recordingIndicator.classList.add('active');
+                    recordingTimer = setInterval(updateRecordingTimer, 1000);
+                    recordBtn.textContent = '⏹️ Stop Recording';
+                    recordBtn.classList.add('recording');
+                    fileName.textContent = '';
+                } catch (err) {
+                    showError('❌ Microphone access denied or not available. Please allow microphone access and try again.');
+                }
+            } else {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                isRecording = false;
+                recordBtn.textContent = 'Start Recording';
+                recordBtn.classList.remove('recording');
+            }
+        });
+
+        async function handleFileUpload(file) {
+            fileName.textContent = `📎 Selected: ${file.name} (${formatFileSize(file.size)})`;
+            currentAudioFile = file;
+
+            const formData = new FormData();
+            formData.append('audio', file);
+
+            loading.classList.add('active');
+            results.classList.remove('active');
+            error.classList.remove('active');
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (err) {
+                showError(`Error: ${err.message}`);
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+
+        function displayResults(data) {
+            // Check if there's an error
+            if (data.error) {
+                showError(data.message || data.error);
+                return;
+            }
+
+            // Update prediction card
+            const predictionCard = document.getElementById('predictionCard');
+            predictionCard.className = `prediction-card prediction-${data.prediction || 'Normal'}`;
+            document.getElementById('predictionText').textContent = `Mental State: ${data.prediction || 'Unknown'}`;
+            document.getElementById('responseText').textContent = data.response_text || '';
+
+            // Update transcription
+            document.getElementById('transcribedText').textContent = data.transcribed_text || 'No transcription available';
+
+            // Update user audio (playback of uploaded/recorded audio)
+            const userAudioElement = document.getElementById('userAudio');
+            if (data.user_audio_url && data.user_audio_url !== '') {
+                userAudioElement.src = data.user_audio_url;
+            } else if (currentAudioFile) {
+                // Fallback: create object URL from the file
+                const audioURL = URL.createObjectURL(currentAudioFile);
+                userAudioElement.src = audioURL;
+            }
+
+            // Update AI response audio
+            const audioElement = document.getElementById('responseAudio');
+            if (data.audio_url && data.audio_url !== '' && data.audio_url !== '/audio/') {
+                audioElement.src = data.audio_url;
+            }
+
+            // Update tips
+            const tipsList = document.getElementById('tipsList');
+            tipsList.innerHTML = '';
+            if (data.tips && Array.isArray(data.tips)) {
+                data.tips.forEach(tip => {
+                    const li = document.createElement('li');
+                    li.textContent = tip;
+                    tipsList.appendChild(li);
+                });
+            }
+
+            // Update yoga
+            const yogaList = document.getElementById('yogaList');
+            yogaList.innerHTML = '';
+            if (data.yoga && Array.isArray(data.yoga)) {
+                data.yoga.forEach(yoga => {
+                    const li = document.createElement('li');
+                    li.textContent = yoga;
+                    yogaList.appendChild(li);
+                });
+            }
+
+            results.classList.add('active');
+        }
+
+        function showError(message) {
+            error.textContent = message;
+            error.classList.add('active');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+    </script>
+</body>
+
+</html>
