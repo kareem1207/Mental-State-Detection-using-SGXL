@@ -43,3 +43,5 @@ Thumbs.db
 # Data
 data/*.json
 !data/sessions.json
+
+Script.bat
